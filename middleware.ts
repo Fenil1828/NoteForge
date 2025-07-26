@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import { NextRequest, NextResponse } from "next/server";
 // import { getSessionCookie } from "better-auth/cookies";
  
@@ -14,6 +15,8 @@
 // export const config = {
 // 	matcher: ["/dashboard/:path*"], // Specify the routes the middleware applies to
 // };
+=======
+>>>>>>> 81769022c8fcec561769025e8fef1f379d78be96
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
