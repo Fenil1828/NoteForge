@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Note, Notebook } from "@/db/schema"
+import { Note } from "@/db/schema"
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Loader2, Trash2 } from "lucide-react";
@@ -34,7 +34,6 @@ interface NoteCardProps {
 export default function NoteCard({ note }: NoteCardProps) {
     
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isOpen , setIsOpen] = useState(false);
 

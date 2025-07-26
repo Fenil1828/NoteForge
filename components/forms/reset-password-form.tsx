@@ -25,9 +25,10 @@ import {
 } from "@/components/ui/form"
 import { useState } from "react"
 
-import { resendVerificationEmail } from "@/server/users"
+// ✅ Removed unused import
+// import { resendVerificationEmail } from "@/server/users"
 import { toast } from "sonner"
-import { Loader2, Mail } from "lucide-react"
+import { Loader2 } from "lucide-react" // ✅ Removed unused Mail icon
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
@@ -35,6 +36,9 @@ import { authClient } from "@/lib/auth-client"
 const formSchema = z.object({
   password: z.string().min(4, "Password must be at least 4 characters"),
   confirmPassword: z.string().min(4, "Password must be at least 4 characters"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 })
 
 export function ResetPasswordForm({
@@ -43,7 +47,6 @@ export function ResetPasswordForm({
 }: React.ComponentProps<"div">) {
   const [isLoading, setIsLoading] = useState(false)
   
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,23 +59,8 @@ export function ResetPasswordForm({
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
-  // Function to handle resending verification email
-  const handleResendVerification = async (email: string) => {
-    try {
-      const response = await resendVerificationEmail(email);
-      if (response.success) {
-        toast.success(response.message, {
-          icon: <Mail className="h-4 w-4" />
-        });
-      } else {
-        toast.error(response.message);
-      }
-    } catch (error) {
-      toast.error("Failed to resend verification email. Please try again.");
-    }
-  }
+  // ✅ Removed unused handleResendVerification function
 
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsLoading(true)
@@ -82,30 +70,25 @@ export function ResetPasswordForm({
         return;
       }
 
-      if (values.password !== values.confirmPassword) {
-        toast.error("Passwords do not match");
-        return;
-      }        
-
-      // Call your auth client to reset the password
       const { error } = await authClient.resetPassword({
         newPassword: values.password,
-        token: token || "",
+        token: token,
       });
       
       if (!error) {
         toast.success("Password reset successfully! You can now login with your new password.")
-        router.push("/login") // Redirect to login on success
+        form.reset()
+        router.push("/login")
       } else {
         toast.error(error.message)
       }
     } catch (error) {
-      console.error(error)
+      console.error("Error resetting password:", error)
       toast.error("An unexpected error occurred. Please try again.")
     } finally {
       setIsLoading(false)
     }
-  } // ✅ Added missing closing brace for onSubmit function
+  }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -128,7 +111,7 @@ export function ResetPasswordForm({
                       <FormItem>
                         <FormLabel>New Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="*******" {...field} />
+                          <Input type="password" placeholder="Enter new password" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -144,7 +127,7 @@ export function ResetPasswordForm({
                       <FormItem>
                         <FormLabel>Confirm New Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="*******" {...field} />
+                          <Input type="password" placeholder="Confirm new password" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -152,12 +135,22 @@ export function ResetPasswordForm({
                   />
                 </div>
                 
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full" disabled={isLoading || !token}>
                   {isLoading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : null}
-                  Reset Password
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Resetting Password...
+                    </>
+                  ) : (
+                    "Reset Password"
+                  )}
                 </Button>
+
+                {!token && (
+                  <div className="text-sm text-destructive text-center">
+                    Invalid reset link. Please request a new password reset.
+                  </div>
+                )}
               </div>
               
               <div className="mt-4 text-center text-sm">
@@ -172,4 +165,4 @@ export function ResetPasswordForm({
       </Card>
     </div>
   )
-} // ✅ Added missing closing brace for component
+}

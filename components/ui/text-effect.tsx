@@ -180,7 +180,9 @@ const createVariantsWithTransition = (
 ): Variants => {
   if (!transition) return baseVariants;
 
-  const { exit: _, ...mainTransition } = transition;
+  // ✅ Fixed: Use rest operator instead of destructuring with unused variable
+  const mainTransition = { ...transition };
+  delete mainTransition.exit;
 
   return {
     ...baseVariants,

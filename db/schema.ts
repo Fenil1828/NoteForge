@@ -111,7 +111,9 @@ export const noteRelations = relations(notes, ({ one }) => ({
 }));
 
 // ✅ Type exports
-export type Notebook = typeof notebooks.$inferSelect;
+export type Notebook = typeof notebooks.$inferSelect & {
+  notes: Note[] 
+  };
 export type InsertNotebook = typeof notebooks.$inferInsert;
 export type Note = typeof notes.$inferSelect;
 export type InsertNote = typeof notes.$inferInsert;

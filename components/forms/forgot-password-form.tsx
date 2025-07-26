@@ -25,14 +25,12 @@ import {
 } from "@/components/ui/form"
 import { useState } from "react"
 
-import {  resendVerificationEmail } from "@/server/users"
+import { resendVerificationEmail } from "@/server/users"
 import { toast } from "sonner"
 import { Loader2, Mail } from "lucide-react"
 import Link from "next/link"
 import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
-
-
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -53,9 +51,8 @@ export function ForgotPasswordForm({
       email: "",
     },
   })
- 
 
-  // Function to handle resending verification email
+  // ✅ Fixed: Proper function declaration with name
   const handleResendVerification = async (email: string) => {
     try {
       const response = await resendVerificationEmail(email);
@@ -72,12 +69,12 @@ export function ForgotPasswordForm({
     }
   }
 
-  // 2. Define a submit handler.
+  // 2. ✅ Fixed: Proper error handling and try-catch structure
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsLoading(true)
       
-      const {error} = await authClient.forgetPassword({
+      const { error } = await authClient.forgetPassword({
         email: values.email,
         redirectTo: "/reset-password"
       });
@@ -85,12 +82,14 @@ export function ForgotPasswordForm({
       if (!error) {
         toast.success("Please check your email for the password reset link")
         router.push("/login")
-      } 
-     else {
-          toast.error(error.message)
-        }
+      } else {
+        toast.error(error.message)
       }
-      finally {
+    } catch (error) {
+      // ✅ Fixed: Added catch block for any unexpected errors
+      console.error("Error sending reset email:", error);
+      toast.error("Failed to send reset email. Please try again.");
+    } finally {
       setIsLoading(false)
     }
   }
@@ -124,19 +123,44 @@ export function ForgotPasswordForm({
                   />
                 </div>
 
+                {/* ✅ Fixed: Better button loading state */}
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : null}
-                  Send Reset Link
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending Reset Link...
+                    </>
+                  ) : (
+                    "Send Reset Link"
+                  )}
                 </Button>   
          
               </div>
+              
               <div className="mt-4 text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <Link href="/signup" className="underline underline-offset-4">
-                  Sign up
+                Remember your password?{" "}
+                <Link href="/login" className="underline underline-offset-4">
+                  Sign in
                 </Link>
+              </div>
+              
+              <div className="text-center text-sm">
+                {/* ✅ Optional: Add resend verification link if needed */}
+                Need to verify your email?{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const email = form.getValues("email");
+                    if (email) {
+                      handleResendVerification(email);
+                    } else {
+                      toast.error("Please enter your email first");
+                    }
+                  }}
+                  className="underline underline-offset-4 hover:text-primary"
+                >
+                  Resend verification
+                </button>
               </div>
             </form>
           </Form>

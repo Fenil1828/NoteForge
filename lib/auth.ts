@@ -7,7 +7,6 @@ import nodemailer from 'nodemailer';
 import { render } from '@react-email/components';
 import VerificationEmail from "@/components/emails/verification-email";
 import PasswordResetEmail from "@/components/emails/reset-email";
-// import PasswordResetEmail from "@/components/emails/password-reset-email"; // 👈 Add this import
 
 // ✅ Create Gmail transporter
 const transporter = nodemailer.createTransport({
@@ -20,12 +19,8 @@ const transporter = nodemailer.createTransport({
 
 export const auth = betterAuth({
   emailVerification: {
-    sendVerificationEmail: async ({ user, url, token }, request) => {
-      console.log("=== EMAIL VERIFICATION START ===");
-      console.log("Attempting to send verification email to:", user.email);
-      console.log("User name:", user.name);
-      console.log("Verification URL:", url);
-
+    // ✅ Clean: Removed all console.log statements
+    sendVerificationEmail: async ({ user, url }) => {
       try {
         const emailHtml = await render(
           VerificationEmail({
@@ -41,12 +36,8 @@ export const auth = betterAuth({
           subject: "Verify your email address - Note Forge",
           html: emailHtml,
         });
-
-        console.log("✅ Email sent successfully via Gmail!");
-        console.log("=== EMAIL VERIFICATION END ===");
       } catch (error) {
-        console.error("❌ Error sending verification email:", error);
-        console.log("=== EMAIL VERIFICATION FAILED ===");
+        console.error("Error sending verification email:", error);
         throw error;
       }
     },
@@ -64,14 +55,9 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-    sendResetPassword: async ({ user, url, token }, request) => {
-      console.log("=== PASSWORD RESET EMAIL START ===");
-      console.log("Attempting to send reset email to:", user.email);
-      console.log("User name:", user.name);
-      console.log("Reset URL:", url);
-
+    // ✅ Clean: Removed all console.log statements
+    sendResetPassword: async ({ user, url }) => {
       try {
-        // 🎯 Render your custom password reset email template
         const emailHtml = await render(
           PasswordResetEmail({
             userName: user.name || "User",
@@ -86,12 +72,8 @@ export const auth = betterAuth({
           subject: "🔒 Reset your Note Forge password",
           html: emailHtml,
         });
-
-        console.log("✅ Password reset email sent successfully!");
-        console.log("=== PASSWORD RESET EMAIL END ===");
       } catch (error) {
-        console.error("❌ Error sending password reset email:", error);
-        console.log("=== PASSWORD RESET EMAIL FAILED ===");
+        console.error("Error sending password reset email:", error);
         throw error;
       }
     },
