@@ -9,9 +9,9 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <Suspense fallback={<div>Loading...</div>}>
+{/*       <Suspense fallback={<div>Loading...</div>}> */}
         <AppSidebar />
-      </Suspense>
+{/*       </Suspense> */}
       <main className="flex-1">{children}</main>
     </SidebarProvider>
   );
