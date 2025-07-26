@@ -14,6 +14,7 @@
 // export const config = {
 // 	matcher: ["/dashboard/:path*"], // Specify the routes the middleware applies to
 // };
+
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
  
@@ -34,9 +35,9 @@ export async function middleware(request: NextRequest) {
     }
  
     // If user is logged in and tries to access auth pages, redirect to dashboard
-    if (sessionCookie && (pathname === '/login' || pathname === '/signup' || pathname === '/')) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
+    // if (sessionCookie && (pathname === '/login' || pathname === '/signup' || pathname === '/')) {
+    //     return NextResponse.redirect(new URL('/dashboard', request.url));
+    // }
  
     return NextResponse.next();
 }
@@ -49,3 +50,23 @@ export const config = {
         '/'
     ],
 };
+
+// import { auth } from "@/lib/auth";
+// import { headers } from "next/headers";
+// import { NextRequest, NextResponse } from "next/server";
+
+// export async function middleware(request: NextRequest) {
+//     const session = await auth.api.getSession({
+//         headers: await headers()
+//     })
+
+//     if (!session) {
+//         return NextResponse.redirect(new URL("/login", request.url));
+//     }
+
+//     return NextResponse.next();
+// }
+
+// export const config = {
+//     matcher: ["/dashboard/:path*"],
+// };
