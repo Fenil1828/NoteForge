@@ -10,10 +10,11 @@ import { Note } from "@/db/schema"
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Loader2, Trash2 } from "lucide-react";
-import { deleteNotebook } from "@/server/notebooks";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { deleteNote } from "@/server/notes";
+
 
 import {
   AlertDialog,
@@ -41,7 +42,7 @@ export default function NoteCard({ note }: NoteCardProps) {
         
         try{
             setIsDeleting(true);
-            const response = await deleteNotebook(note.id);
+            const response = await deleteNote(note.id);
                 if (response.success) {
                     toast.success("Notebook deleted successfully!");
                     router.refresh(); // Refresh the page to reflect changes
