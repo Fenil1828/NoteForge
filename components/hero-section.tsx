@@ -25,6 +25,21 @@ export default function HeroSection() {
   return (
     <>
       <HeroHeader />
+      <div className="min-h-screen w-full bg-black relative">
+  {/* Black Basic Grid Background */}
+  <div
+    className="absolute inset-0 z-0"
+    style={{
+      background: "#000000",
+      backgroundImage: `
+        linear-gradient(to right, rgba(75, 85, 99, 0.4) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(75, 85, 99, 0.4) 1px, transparent 1px)
+      `,
+      backgroundSize: "40px 40px",
+    }}
+  />
+     {/* Your Content/Components */}
+
       <main className="overflow-hidden">
         <div
           aria-hidden
@@ -130,6 +145,7 @@ export default function HeroSection() {
           </div>
         </section>
       </main>
+        </div>
     </>
   );
 }
